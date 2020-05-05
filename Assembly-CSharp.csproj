@@ -60,12 +60,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\scripts\aRainyMorning.cs" />
+    <Compile Include="Assets\scripts\back.cs" />
     <Compile Include="Assets\scripts\buttons.cs" />
-    <Compile Include="Assets\scripts\createLevel.cs" />
     <Compile Include="Assets\scripts\Game.cs" />
     <Compile Include="Assets\scripts\note.cs" />
     <Compile Include="Assets\scripts\notes.cs" />
-    <None Include="Assets\A_Rainy_Morning.txt" />
+    <Compile Include="Assets\scripts\quitGame.cs" />
+    <Compile Include="Assets\scripts\SkyAndSeaAndPoem.cs" />
+    <None Include="Assets\beatmaps\Sky_and_Sea_and_Poem.txt" />
+    <None Include="Assets\beatmaps\A_Rainy_Morning.txt" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/10648/Desktop/Rhythm/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
