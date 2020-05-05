@@ -1,57 +1,99 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
-	public AudioSource myMusic;
+	public AudioSource music1;
+	public AudioSource music2;
+	AudioSource myMusic;
 	public bool startMusic;
+	public bool musicEnd;
+	public bool loadedNotes;
 
+	public int musicIdx;
+	public string scriptPath;
 	public notes notes;
 	public note myNote;
 	public static Game game;
 
 	public float delay;
+	public float speed;
 
 	public int score;
 	public int combo;
+	public Text scoreText;
+	public Text comboText;
 
     // Start is called before the first frame update
     void Start()
     {
 		game = this;
 
+		loadedNotes = false;
+		scriptPath = "Assets/beatmaps/A_Rainy_Morning.txt";
+
 		score = 0;
 		combo = 0;
-
-		StreamReader reader = new StreamReader("Assets/A_Rainy_Morning.txt");
-		createNotes(reader.ReadToEnd());
 	}
 
     // Update is called once per frame
     void Update()
     {
+		if (!loadedNotes && SceneManager.GetActiveScene().name == "game")
+		{
+			musicIdx = PlayerPrefs.GetInt("musicIdx");
+			scriptPath = PlayerPrefs.GetString("scriptPath");
+			if (musicIdx == 1)
+			{
+				myMusic = music1;
+			}
+			else
+			{
+				myMusic = music2;
+			}
+			StreamReader reader = new StreamReader(scriptPath);
+			createNotes(reader.ReadToEnd());
+			loadedNotes = true;
+		}
+
         if (!startMusic)
 		{
-			if (Input.anyKeyDown)
+			if (SceneManager.GetActiveScene().name == "game" && Input.GetKeyDown(KeyCode.Return))
 			{
 				startMusic = true;
 				notes.startMusic = true;
 				myMusic.Play();
 			}
 		}
+
+		if (!myMusic.isPlaying)
+		{
+			musicEnd = true;
+		}
     }
 
 	public void hit()
 	{
 		combo++;
+		if (combo >= 5)
+		{
+			comboText.color = new Color(0, 0, 0, 255);
+			comboText.text = "Combo: " + combo;
+		}
+
+		score += (combo - combo % 10) / 10 + 1;
+		scoreText.text = "Score: " + score;
 	}
 
 	public void miss()
 	{
 		combo = 0;
+		comboText.color = new Color(0, 0, 0, 0);
 	}
 
 	void createNotes(string notesScript)
@@ -68,6 +110,13 @@ public class Game : MonoBehaviour
 			note newNote = Instantiate<note>(myNote);
 			newNote.transform.position = new Vector3(x, 0.6f, z);
 			newNote.transform.parent = notes.transform;
+
+			if (noteInfo.Split(' ').Length > 2)
+			{
+				float length = float.Parse(noteInfo.Split(' ')[2]);
+				newNote.transform.localScale = new Vector3(1, 0.2f, length*notes.speed);
+				newNote.transform.position = newNote.transform.position + new Vector3(0, 0, (length*notes.speed-1) / 2);
+			}
 		}
 	}
 
